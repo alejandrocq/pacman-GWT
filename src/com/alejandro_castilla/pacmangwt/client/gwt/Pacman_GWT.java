@@ -1,5 +1,8 @@
-package com.alejandro_castilla.pacmangwt.client;
+package com.alejandro_castilla.pacmangwt.client.gwt;
 
+import com.alejandro_castilla.pacmangwt.client.GreetingService;
+import com.alejandro_castilla.pacmangwt.client.GreetingServiceAsync;
+import com.alejandro_castilla.pacmangwt.client.jre.Map;
 import com.alejandro_castilla.pacmangwt.shared.FieldVerifier;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
@@ -41,11 +44,14 @@ public class Pacman_GWT implements EntryPoint {
     private Canvas canvas;
     private Context2d context2D;
 
+	private Map maze = new Map();
+
     /**
      * Colors
      */
 
-    private final CssColor colorBlue = CssColor.make("blue");
+    private final CssColor mazeColor = CssColor.make("blue");
+	private final CssColor canvasColor = CssColor.make("black");
 
     /**
 	 * This is the entry point method.
@@ -59,7 +65,7 @@ public class Pacman_GWT implements EntryPoint {
         RootPanel.get(menuBarHolder).add(menuBar);
         RootPanel.get(canvasHolder).add(canvas);
 
-        drawCanvas();
+        drawMaze();
 
 
 		
@@ -205,12 +211,78 @@ public class Pacman_GWT implements EntryPoint {
         canvas.setCoordinateSpaceHeight(canvasHeight);
     }
 
-    private void drawCanvas() {
-        context2D = canvas.getContext2d();
-        context2D.beginPath();
-        context2D.setFillStyle(colorBlue);
-        context2D.fillRect(0, 0, 800, 600);
-        context2D.closePath();
+    private void drawMaze() {
+        int cellWidth = Math.min(canvasWidth / maze.getWidth(), canvasHeight / maze.getHeight());
+		int x, y, offset = (canvasWidth - (maze.getWidth() * cellWidth)) / 2;
+
+		context2D = canvas.getContext2d();
+		context2D.beginPath();
+		context2D.setFillStyle(canvasColor);
+		context2D.fillRect(0, 0, canvasWidth, canvasWidth);
+		context2D.closePath();
+
+		for (x = 0 ; x < maze.getWidth() ; x++) {
+			for (y = 0 ; y < maze.getHeight() ; y++) {
+				switch (maze.getCellAt(x, y)) {
+					case Map.RECTANGLE_UP:
+						context2D.beginPath();
+						context2D.setFillStyle(mazeColor);
+						context2D.fillRect(offset + x*cellWidth, y*cellWidth, cellWidth, cellWidth/2);
+						context2D.closePath();
+						break;
+					case Map.RECTANGLE_DOWN:
+						context2D.beginPath();
+						context2D.setFillStyle(mazeColor);
+						context2D.fillRect(offset + x*cellWidth, y*cellWidth + cellWidth/2, cellWidth, cellWidth/2);
+						context2D.closePath();
+						break;
+					case Map.RECTANGLE_LEFT:
+						context2D.beginPath();
+						context2D.setFillStyle(mazeColor);
+						context2D.fillRect(offset + x*cellWidth, y*cellWidth, cellWidth/2, cellWidth);
+						context2D.closePath();
+						break;
+					case Map.RECTANGLE_RIGHT:
+						context2D.beginPath();
+						context2D.setFillStyle(mazeColor);
+						context2D.fillRect(offset + x*cellWidth + cellWidth/2, y*cellWidth, cellWidth/2, cellWidth);
+						context2D.closePath();
+						break;
+					case Map.UPPER_LEFT_CORNER:
+						context2D.beginPath();
+						context2D.setFillStyle(mazeColor);
+						context2D.moveTo(offset + x*cellWidth, y*cellWidth);
+						context2D.lineTo(offset + x*cellWidth, y*cellWidth + cellWidth/2);
+						context2D.lineTo(offset + x*cellWidth + cellWidth/2, y*cellWidth);
+						context2D.moveTo(offset + x*cellWidth + cellWidth/2, y*cellWidth);
+						context2D.lineTo(offset + x*cellWidth, y*cellWidth + cellWidth/2);
+						context2D.fill();
+						context2D.closePath();
+						break;
+					case Map.BOTTOM_LEFT_CORNER:
+						//TODO Complete this
+						break;
+					case Map.UPPER_LEFT_BIG_CORNER:
+						context2D.beginPath();
+						context2D.setFillStyle(mazeColor);
+						context2D.fillRect(offset + x*cellWidth, y*cellWidth, cellWidth, cellWidth);
+						context2D.setFillStyle(canvasColor);
+						context2D.moveTo(offset + x*cellWidth, y*cellWidth);
+						context2D.lineTo(offset + x*cellWidth, y*cellWidth + cellWidth/2);
+						context2D.lineTo(offset + x*cellWidth + cellWidth/2, y*cellWidth);
+						context2D.moveTo(offset + x*cellWidth + cellWidth/2, y*cellWidth);
+						context2D.lineTo(offset + x*cellWidth, y*cellWidth + cellWidth/2);
+						context2D.fill();
+						context2D.closePath();
+						break;
+
+
+				}
+			}
+		}
+
+
+
     }
 
 }
