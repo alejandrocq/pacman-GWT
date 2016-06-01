@@ -47,12 +47,7 @@ public class Pacman_GWT implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		
-		Command menuBarHandler = new Command () {
-			@Override
-			public void execute() {
-				Window.alert("Has pulsado una opción del menú.");
-			}
-		};
+		Command menuBarHandler = () -> Window.alert("Has pulsado una opción del menú.");
 		
 		gameBar = new MenuBar(true);
 		gameBar.addItem("Nuevo", menuBarHandler);
