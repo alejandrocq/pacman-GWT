@@ -32,3 +32,9 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+div#canvasContainer {
+    margin: 15px auto auto;
+    width: 80%;
+    text-align: center;
+}

@@ -1,24 +1,16 @@
 package com.alejandro_castilla.pacmangwt.client;
 
 import com.alejandro_castilla.pacmangwt.shared.FieldVerifier;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.*;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -40,29 +32,40 @@ public class Pacman_GWT implements EntryPoint {
 	 * Widgets fields.
 	 */
 	
-	private MenuBar rootMenuBar, gameBar, helpBar;
+    private final String menuBarHolder = "menuBarContainer";
+    private MenuBar menuBar;
 
-	/**
+    private final String canvasHolder = "canvasContainer";
+    private final int canvasWidth = 800;
+    private final int canvasHeight = 600;
+    private Canvas canvas;
+    private Context2d context2D;
+
+    /**
+     * Colors
+     */
+
+    private final CssColor colorBlue = CssColor.make("blue");
+
+    /**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
 		
-		Command menuBarHandler = () -> Window.alert("Has pulsado una opción del menú.");
+        createMenuBar();
+        createCanvas();
+
+        menuBar = createMenuBar();
+        RootPanel.get(menuBarHolder).add(menuBar);
+        RootPanel.get(canvasHolder).add(canvas);
+
+        drawCanvas();
+
+
 		
-		gameBar = new MenuBar(true);
-		gameBar.addItem("Nuevo", menuBarHandler);
-		gameBar.addItem("Pausar", menuBarHandler);
-		
-		helpBar = new MenuBar(true);
-		helpBar.addItem("Acerca de", menuBarHandler);
-		
-		rootMenuBar = new MenuBar();
-		rootMenuBar.addItem("Juego", gameBar);
-		rootMenuBar.addItem("Ayuda", helpBar);
-		
-		RootPanel.get("menuBarContainer").add(rootMenuBar);
-		
-		/* Example code. I'm using this to learn how to work with GWT. */
+		/**
+         *  Example code. I'm using this to learn how to work with GWT.
+         */
 		
 		final Button sendButton = new Button("Send");
 		final TextBox nameField = new TextBox();
@@ -170,4 +173,44 @@ public class Pacman_GWT implements EntryPoint {
 		sendButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
 	}
+
+    private MenuBar createMenuBar() {
+        Command menuBarHandler = new Command() {
+            @Override
+            public void execute() {
+                Window.alert("Has pulsado una opción del menú.");
+            }
+        };
+
+        MenuBar gameBar = new MenuBar(true);
+        gameBar.addItem("Nuevo", menuBarHandler);
+        gameBar.addItem("Pausar", menuBarHandler);
+
+        MenuBar helpBar = new MenuBar(true);
+        helpBar.addItem("Acerca de", menuBarHandler);
+
+        MenuBar rootMenuBar = new MenuBar();
+        rootMenuBar.addItem("Juego", gameBar);
+        rootMenuBar.addItem("Ayuda", helpBar);
+
+        return rootMenuBar;
+    }
+
+    private void createCanvas() {
+        canvas = canvas.createIfSupported();
+
+        canvas.setWidth(canvasWidth + "px");
+        canvas.setHeight(canvasHeight + "px");
+        canvas.setCoordinateSpaceWidth(canvasWidth);
+        canvas.setCoordinateSpaceHeight(canvasHeight);
+    }
+
+    private void drawCanvas() {
+        context2D = canvas.getContext2d();
+        context2D.beginPath();
+        context2D.setFillStyle(colorBlue);
+        context2D.fillRect(0, 0, 800, 600);
+        context2D.closePath();
+    }
+
 }
