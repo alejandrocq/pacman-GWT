@@ -1,5 +1,6 @@
 package com.alejandro_castilla.pacmangwt.client;
 
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
